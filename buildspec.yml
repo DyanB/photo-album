@@ -1,0 +1,50 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo "Installing dependencies..."
+      - cd index-photos
+      - pip install -r requirements.txt
+      - cd ../search-photos
+      - pip install -r requirements.txt
+      - cd ..
+      - ls
+      - pwd
+      - echo "install step"
+  pre_build:
+    commands:
+      - echo "pre_build step"
+  build:
+    commands:
+      - echo "Building the Lambda functions..."
+      - pwd
+      - cd index-photos
+      - pwd
+      - ls
+      - zip -r ../index-photos.zip *
+      - cd ../search-photos
+      - pwd
+      - ls
+      - zip -r ../search-photos.zip *
+      - cd ..
+      - ls
+      - pwd
+      - echo "Listing current directory contents:"
+      - ls -la
+      - aws s3 sync ./Frontend/ "s3://photosappfrontend"
+      - cd ..
+      - echo "Listing current directory contents:"
+      - ls -la
+      
+      
+  post_build:
+    commands:
+      - pwd
+      - ls
+      - echo "Updating the Lambda function index-photos..."
+      - aws lambda update-function-code --function-name index-photos --zip-file "fileb://index-photos.zip"
+      - echo "Updating the Lambda function search-photos..."
+      - aws lambda update-function-code --function-name search-photos --zip-file "fileb://search-photos.zip"
+      - echo "post_build step"
