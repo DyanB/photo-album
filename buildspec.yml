@@ -34,7 +34,8 @@ phases:
       - echo "Listing current directory contents:"
       - ls -la
       - aws s3 sync ./Frontend/ "s3://photosappfrontend"
-      - cd ..
+      - ls -la
+      - cd
       - echo "Listing current directory contents:"
       - ls -la
       
