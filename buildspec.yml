@@ -33,11 +33,6 @@ phases:
       - pwd
       - echo "Listing current directory contents:"
       - ls -la
-      - aws s3 sync ./Frontend/ "s3://photosappfrontend"
-      - ls -la
-      - cd
-      - echo "Listing current directory contents:"
-      - ls -la
       
       
   post_build:
@@ -49,3 +44,5 @@ phases:
       - echo "Updating the Lambda function search-photos..."
       - aws lambda update-function-code --function-name search-photos --zip-file "fileb://search-photos.zip"
       - echo "post_build step"
+      - echo "Syncing Frontend"
+      - aws s3 sync ./Frontend/ "s3://photosappfrontend"
