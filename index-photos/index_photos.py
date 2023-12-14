@@ -3,7 +3,7 @@ import boto3 # Python library to access aws services
 import dateutil.parser as parser
 import os
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
-
+import base64
 
 # Opensearch settings
 host = 'vpc-photoscc3-lcmxnrk5m4p55kzg6aet3fhsnq.us-east-1.es.amazonaws.com'
@@ -35,7 +35,13 @@ def lambda_handler(event, context):
     print(key)
     
     # Labels List
-    LabelsList = [] 
+    LabelsList = []
+    
+    # Fetch S3 object
+    base64_string = s3_client.get_object(Bucket = bucket, Key = key)
+    base64_stream = base64_string['Body'].read()
+    base_64_binary = base64.decodebytes(base64_stream)
+    
 
     # Fetch Object Metadata
     ObjectMetaData = s3_client.head_object(Bucket = bucket, Key = key)
@@ -46,7 +52,7 @@ def lambda_handler(event, context):
         LabelsList.append(ObjectMetaData['ResponseMetadata']['HTTPHeaders']['x-amz-meta-customlabels'])
         
     # Detect labels using AWS Rekognition
-    response = rekognition_client.detect_labels(Image = {"S3Object":{"Bucket": bucket, "Name": key}})
+    response = rekognition_client.detect_labels(Image = {"Bytes": base_64_binary})
     print(response)
 
     for Label in response['Labels']:
@@ -67,8 +73,16 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
+        'headers': {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",  # Specify the allowed headers
+            "Access-Control-Allow-Methods": "*",  # Specify the allowed HTTP methods
+        },
         'body': json.dumps('Image indexed successfully!')
     }
     
+    
+
+
     
 

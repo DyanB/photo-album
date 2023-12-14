@@ -44,11 +44,10 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
+        'headers': {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",  # Specify the allowed headers
+            "Access-Control-Allow-Methods": "*",  # Specify the allowed HTTP methods
+        },
         'body': json.dumps(results)
     }
-
-
-# {'dialogAction': {'type': 'Close'}, 
-#  'intent': {'name': 'SearchIntent', 'slots': {'keyslot1': {'value': {'originalValue': 'cats', 'interpretedValue': 'cats', 'resolvedValues': ['Cats']}}, 'keyslot2': None}, 'state': 'ReadyForFulfillment', 'confirmationState': 'None'},
-#    'sessionAttributes': {}, 
-#    'originatingRequestId': 'abdded76-5e2f-4b20-a1d6-219aff0f7c15'}
